@@ -1,8 +1,8 @@
-### Ïåğåõîä â âåòêó main
+### ¥à¥å®¤ ¢ ¢¥âªã main
 
 `git checkout main`
 
-### Ñîçäàíèå êàòàëîãà branching è ôàéëîâ merge.sh è rebase.sh ñ ñîäåğæèìûì èç çàäàíèÿ
+### ‘®§¤ ­¨¥ ª â «®£  branching ¨ ä ©«®¢ merge.sh ¨ rebase.sh á á®¤¥à¦¨¬ë¬ ¨§ § ¤ ­¨ï
 
 ### commit "prepare for merge and rebase"
 ```
@@ -10,10 +10,10 @@ git add branching\merge.sh
 git add branching\rebase.sh
 commit -m "prepare for merge and rebase"
 ```
-### Ïîäãîòîâêà ôàéëà merge.sh
+### ®¤£®â®¢ª  ä ©«  merge.sh
 `git checkout -b git-merge`
 
-### Ğåäàêòèğîâàíèå ôàéëà merge.sh
+### ¥¤ ªâ¨à®¢ ­¨¥ ä ©«  merge.sh
 
 ### commit "@ instead *"
 ```
@@ -24,32 +24,32 @@ git commit -a "merge: @ instead *"
 
 `git push --set-upstream origin git-merge`
 
-### Ğåäàêòèğîâàíèå ôàéëà merge.sh ğàçğàáîò÷èêîì
+### ¥¤ ªâ¨à®¢ ­¨¥ ä ©«  merge.sh à §à ¡®âç¨ª®¬
 
 ### commit "use shift"
 ```
 git add branching\merge.sh
 git commit -a "merge: use shift"
 ```
-### Èçìåíåíèå main è ñîäåğæèìîãî ôàéëà rebase.sh
+### ˆ§¬¥­¥­¨¥ main ¨ á®¤¥à¦¨¬®£® ä ©«  rebase.sh
 ```
 git checkout main
 git add branching\rebase.sh
 git commit -m "rebase.sh changed"
 git push
 ```
-### Ïîäãîòîâêà ôàéëà rebase.sh
+### ®¤£®â®¢ª  ä ©«  rebase.sh
 ```
 git checkout fd0f9dd8b95c3a64337eb854054bec1fa2db3d3e
 git checkout -b git-rebase
 ```
-### Ğåäàêòèâàğîíèå rebase.sh
+### ¥¤ ªâ¨¢ à®­¨¥ rebase.sh
 ```
 git add branching\rebase.sh
 git commit -m "git-rebase 1"
 git push --set-upstream origin git-rebase
 ```
-### Ğåäàêòèâàğîíèå rebase.sh
+### ¥¤ ªâ¨¢ à®­¨¥ rebase.sh
 ```
 git add branching\rebase.sh
 git commit -m "git-rebase 2"
@@ -66,12 +66,12 @@ git push
 git checkout git-rebase
 git rebase -i main
 ```
-### Ğåøåíèå êîíôëèêòà è ïğîäîëæåíèå rebase
+### ¥è¥­¨¥ ª®­ä«¨ªâ  ¨ ¯à®¤®«¦¥­¨¥ rebase
 ```
 git add branching/rebase.sh
 git rebase --continue
 ```
-### Ğåøåíèå âòîğîãî êîíôëèêòà è ïğîäîëæåíèå rebase
+### ¥è¥­¨¥ ¢â®à®£® ª®­ä«¨ªâ  ¨ ¯à®¤®«¦¥­¨¥ rebase
 ```
 git add branching/rebase.sh
 git rebase --continue
@@ -97,7 +97,7 @@ To https://github.com/polyakoffalex/devops-netology.git
  + e81f09f...ae40384 git-rebase -> git-rebase (forced update)
 Branch 'git-rebase' set up to track remote branch 'git-rebase' from 'origin'.
 ```
-### Merge âåòêè git-rebase
+### Merge ¢¥âª¨ git-rebase
 ```
 git checkout main
 git merge git-rebase
