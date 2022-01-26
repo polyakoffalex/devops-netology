@@ -1,119 +1,93 @@
-# Домашнее задание к занятию «2.4. Инструменты Git»
+# Домашнее задание к занятию "3.1. Работа в терминале, лекция 1"
 
 
-### 1. Найдите полный хеш и комментарий коммита, хеш которого начинается на aefea.
+###### 1. Установите средство виртуализации Oracle VirtualBox.
 
-`$ git show aefea --stat`
+***Установлен VirtualBox 6.1.32***  
 
-```
- commit aefead2207ef7e2aa5dc81a34aedf0cad4c32545
+###### 2. Установите средство автоматизации Hashicorp Vagrant.
 
- Author: Alisdair McDiarmid <alisdair@users.noreply.github.com>
- Date:   Thu Jun 18 10:29:58 2020 -0400
-
-  Update CHANGELOG.md
-
-CHANGELOG.md | 1 +
-1 file changed, 1 insertion(+)
-```
-
-### 2. Какому тегу соответствует коммит 85024d3?
-
-`$ git show 85024d3 --stat`
-
-```
-commit 85024d3100126de36331c6982bfaac02cdab9e76 (tag: v0.12.23)
-Author: tf-release-bot <terraform@hashicorp.com>
-Date:   Thu Mar 5 20:56:10 2020 +0000
-
-    v0.12.23
-
- CHANGELOG.md       | 2 +-
- version/version.go | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
-```
-
-***tag: v0.12.23***
+***Установлен Vagrant 2.2.19***
 
 
+##### 3. В вашем основном окружении подготовьте удобный для дальнейшей работы терминал. Можно предложить:
 
-### 3. Сколько родителей у коммита b8d720? Напишите их хеши.
+***Подготовлен Windows Terminal***  
+***Vagrant добавлен в исключения для Kaspersky***
 
-`$ git log --pretty=%P -n 1 b8d720`
-
-`56cd7859e05c36c06b56d013b55a252d0bb7e158 9ea88f22fc6269854151c571162c5bcf958bee2b`
-
-
-### 4. Перечислите хеши и комментарии всех коммитов которые были сделаны между тегами v0.12.23 и v0.12.24.
+##### 4. С помощью базового файла конфигурации запустите Ubuntu 20.04 в VirtualBox посредством Vagrant:
 
 
-`$ git log --pretty=oneline v0.12.23...v0.12.24`
-
-```
-33ff1c03bb960b332be3af2e333462dde88b279e (tag: v0.12.24) v0.12.24
-b14b74c4939dcab573326f4e3ee2a62e23e12f89 [Website] vmc provider links
-3f235065b9347a758efadc92295b540ee0a5e26e Update CHANGELOG.md
-6ae64e247b332925b872447e9ce869657281c2bf registry: Fix panic when server is unreachable
-5c619ca1baf2e21a155fcdb4c264cc9e24a2a353 website: Remove links to the getting started guide's old location
-06275647e2b53d97d4f0a19a0fec11f6d69820b5 Update CHANGELOG.md
-d5f9411f5108260320064349b757f55c09bc4b80 command: Fix bug when using terraform login on Windows
-4b6d06cc5dcb78af637bbb19c198faff37a066ed Update CHANGELOG.md
-dd01a35078f040ca984cdd349f18d0b67e486c35 Update CHANGELOG.md
-225466bc3e5f35baa5d07197bbc079345b77525e Cleanup after v0.12.23 release
-```
+***Директория создана, Vagrantfile заиничен, отредактирован согласно инструкции***  
+***Выполнена команда vagrant up, виртуальная машина установлена и запущена***  
+***Проверена работоспособность команд vagrant suspend, vagrant halt***
 
 
-### 5. Найдите коммит в котором была создана функция func providerSource, ее определение в коде выглядит так func providerSource(...) (вместо троеточего перечислены аргументы).
+##### 5. Ознакомьтесь с графическим интерфейсом VirtualBox, посмотрите как выглядит виртуальная машина, которую создал для вас Vagrant, какие аппаратные ресурсы ей выделены. Какие ресурсы выделены по-умолчанию?
+
+***Оперативная память: 1024 Mb***    
+***Процессоры: 2***  
+***Ускорение: VT-x/AMD-V, Nested paging, Паравиртуализация KVM***  
+***Видеопамять: 4 Mb***
+***Графический контроллер: VBoxVGA***  
+***Порт сервера удаленного дисплея: 5902***  
+***SATA порт 0: ubuntu-20.04-amd64-disk001.vmdk (обычный 64 Gb)***  
+***Адаптер 1: Intel PRO/1000 MT Desktop (NAT)***
+
+##### 6. Ознакомьтесь с возможностями конфигурации VirtualBox через Vagrantfile: документация. Как добавить оперативной памяти или ресурсов процессора виртуальной машине?
+
+***Редактирование файла Vagrantfile в секции config.vm.provider добавить/изменить значения v.memory и v.cpus***
+
+##### 7. Команда vagrant ssh из директории, в которой содержится Vagrantfile, позволит вам оказаться внутри виртуальной машины без каких-либо дополнительных настроек. Попрактикуйтесь в выполнении обсуждаемых команд в терминале Ubuntu.
+
+***Выполнено***
 
 
-`$ git log -S "func providerSource"`
+##### 8. Ознакомиться с разделами man bash, почитать о настройках самого bash:
 
-```
-commit 8c928e83589d90a031f811fae52a81be7153e82f
-Author: Martin Atkins <mart@degeneration.co.uk>
-Date:   Thu Apr 2 18:04:39 2020 -0700
+* какой переменной можно задать длину журнала history, и на какой строчке manual это описывается?
 
-```
-`$ git show 8c928e835`
+***HISTFILESIZE - максимальное число строк в файле истории для хранения, строка 586***
 
-***func providerSource(services `*`disco.Disco)***
+* что делает директива ignoreboth в bash?
 
+***ignoreboth — использование обеих опций***  
+`ignorespace - не сохранять строки начинающиеся с символа <пробел>`  
+`ignoredups - не сохранять строки, совпадающие с последней выполненной командой`
 
-### 6. Найдите все коммиты в которых была изменена функция globalPluginDirs
+##### 9. В каких сценариях использования применимы скобки `{` `}` и на какой строчке man bash это описано?
 
+***`{} - используется для задания диапазона значений выполнения команд`***  
+***например touch {001..100}***  
+***line 133 RESERVED WORDS***
+##### 10. С учётом ответа на предыдущий вопрос, как создать однократным вызовом touch 100000 файлов? Получится ли аналогичным образом создать 300000? Если нет, то почему?
+***touch {000001..100000}***
+***создание 100000 файлов***  
+***создать 300000 файлов не получится: Argument list too long***  
 
-`$ git grep -n "func globalPluginDirs"`
+##### 11. В man bash поищите по `/\[\[`. Что делает конструкция `[[ -d /tmp ]]`  
 
+***Конструкция [[ -d /tmp ]] проверяет наличие директории /tmp***
 
-***`plugins.go:18:func globalPluginDirs() []string {`***
+##### 12. Основываясь на знаниях о просмотре текущих (например, PATH) и установке новых переменных; командах, которые мы рассматривали, добейтесь в выводе type -a bash в виртуальной машине наличия первым пунктом в списке:
 
+`vagrant@vagrant:~$ mkdir /tmp/new_path_directory/`  
+`vagrant@vagrant:~$ cp /bin/bash /tmp/new_path_directory/`  
+`vagrant@vagrant:~$ type -a bash`  
+**bash is /usr/bin/bash  
+bash is /bin/bash**
 
-`$ git log -L :globalPluginDirs:plugins.go`
-
-
-  
-**commit 78b12205587fe839f10d946ea3fdc06719decb05**
-
-**commit 52dbf94834cb970b510f2fba853a5b49ad9b1a46**  
-
-**commit 41ab0aef7a0fe030e84018973a64135b11abcd70**
-  
-**commit 66ebff90cdfaa6938f26f908c7ebad8d547fea17**
-
-**commit 8364383c359a6b738a436d1b7745ccdce178df47**
-
-
-
-### 7. Кто автор функции synchronizedWriters?
-
-`$ git log -SsynchronizedWriters`
+`vagrant@vagrant:~$ PATH=/tmp/new_path_directory/:$PATH`  
+`vagrant@vagrant:~$ type -a bash`  
+**bash is /tmp/new_path_directory/bash  
+bash is /usr/bin/bash  
+bash is /bin/bash**
 
 
+##### 13. Чем отличается планирование команд с помощью batch и at?
 
-`commit 5ac311e2a91e381e2f52234668b49ba670aa0fe5`
+***команда at используется для назначения одноразового задания на заданное время, а команда batch — для назначения одноразовых задач, которые должны выполняться, когда загрузка системы становится меньше 0,8***
 
-***Author: Martin Atkins <mart@degeneration.co.uk>***
-```Date:   Wed May 3 16:25:41 2017 -0700
+##### 14. Завершите работу виртуальной машины чтобы не расходовать ресурсы компьютера и/или батарею ноутбука.
 
-    main: synchronize writes to VT100-faker on Windows
-```
+***vagrant halt***
