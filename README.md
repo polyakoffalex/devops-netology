@@ -1,71 +1,117 @@
-# Домашнее задание к занятию "3.3. Операционные системы, лекция 1"
+# Домашнее задание к занятию "3.4. Операционные системы, лекция 2"
 
 
-###### 1. Какой системный вызов делает команда cd? В прошлом ДЗ мы выяснили, что cd не является самостоятельной программой, это shell builtin, поэтому запустить strace непосредственно на cd не получится. Тем не менее, вы можете запустить strace на /bin/bash -c 'cd /tmp'. В этом случае вы увидите полный список системных вызовов, которые делает сам bash при старте. Вам нужно найти тот единственный, который относится именно к cd. Обратите внимание, что strace выдаёт результат своей работы в поток stderr, а не в stdout.
-
-***`chdir ("/tmp")`***  
+###### 1. На лекции мы познакомились с node_exporter...  
 
 
-###### 2. Попробуйте использовать команду file на объекты разных типов на файловой системе... Используя strace выясните, где находится база данных file на основании которой она делает свои догадки
+**# HELP go_gc_duration_seconds A summary of the pause duration of garbage collection cycles.**  
+**# TYPE go_gc_duration_seconds summary**  
+**go_gc_duration_seconds{quantile="0"} 0**   
+**go_gc_duration_seconds{quantile="0.25"} 0**  
+**go_gc_duration_seconds{quantile="0.5"} 0**  
+**go_gc_duration_seconds{quantile="0.75"} 0**  
+**go_gc_duration_seconds{quantile="1"} 0**  
+**go_gc_duration_seconds_sum 0**  
+**go_gc_duration_seconds_count 0**  
+**# HELP go_goroutines Number of goroutines that currently exist.**  
+**# TYPE go_goroutines gauge**  
+**go_goroutines 9**  
+.....
+ - поместите его в автозагрузку
+ - предусмотрите возможность добавления опций к запускаемому процессу через внешний файл (посмотрите, например, на systemctl cat cron)  
+ - удостоверьтесь, что с помощью systemctl процесс корректно стартует, завершается, а после перезагрузки автоматически поднимается.
 
-***Судя по всему `openat(AT_FDCWD, "/usr/share/misc/magic.mgc", O_RDONLY) = 3`***  
-***По пути `/etc.magic.mgc` выводится ошибка `openat(AT_FDCWD, "/etc/magic.mgc", O_RDONLY) = -1 ENOENT (No such file or directory)`***
+`cat nano /etc/systemd/system/node_exporter.service`
 
-##### 3. Предположим, приложение пишет лог в текстовый файл. Этот файл оказался удален (deleted в lsof), однако возможности сигналом сказать приложению переоткрыть файлы или просто перезапустить приложение – нет. Так как приложение продолжает писать в удаленный файл, место на диске постепенно заканчивается. Основываясь на знаниях о перенаправлении потоков предложите способ обнуления открытого удаленного файла (чтобы освободить место на файловой системе).
+**[Unit]**  
+***Description=Prometheus Node Exporter***  
+***Wants=network-online.target***  
+***After=network-online.target***
 
-***`vagrant@vagrant:~$ ping 8.8.8.8 > /tmp/ping_log`***  
-***`vagrant@vagrant:~$ rm -rf /tmp/ping_log`***  
-***`vagrant@vagrant:~$ ps aux | grep ping`***  
-***`vagrant@vagrant:~$ lsof -p 3489`***  
-***ping    3489 root    1w   REG  253,0    36576 1572881 /tmp/ping_log (deleted)***  
-***`vagrant@vagrant:~$ echo '' >/proc/1126/fd/5`***
+**[Service]**  
+***User=node_exporter***  
+***Group=node_exporter***  
+***Type=simple***  
+***ExecStart=/usr/local/bin/node_exporter***
 
-##### 4. Занимают ли зомби-процессы какие-то ресурсы в ОС (CPU, RAM, IO)?
+**[Install]**  
+***WantedBy=multi-user.target***
 
-***Зомби процессы не потребляют ресурсов CPU, RAM. Единственный потребляемый ресурс - запись в таблице процессов ядра***
+`sudo systemctl enable --now node_exporter`  
+`systemctl status node_exporter`
+
+***Active: active  (running)***
+###### 2. Ознакомьтесь с опциями node_exporter и выводом /metrics по-умолчанию. Приведите несколько опций, которые вы бы выбрали для базового мониторинга хоста по CPU, памяти, диску и сети.
+***# TYPE node_cpu_seconds_total counter***  
+**node_cpu_seconds_total{cpu="0",mode="idle"} 5199.8**  
+**node_cpu_seconds_total{cpu="0",mode="system"} 82.21**  
+**node_cpu_seconds_total{cpu="0",mode="user"} 243.12**
+
+***# TYPE node_memory_MemAvailable_bytes gauge***  
+**node_memory_MemAvailable_bytes 2.256326656e+09**  
+***# TYPE node_memory_MemFree_bytes gauge***  
+**node_memory_MemFree_bytes 9.45836032e+08**  
+
+***# TYPE node_memory_MemTotal_bytes gauge***  
+**node_memory_MemTotal_bytes 4.122759168e+09**  
+***# TYPE node_disk_io_time_seconds_total counter***  
+**node_disk_io_time_seconds_total{device="sda"} 58.92**  
+***# TYPE node_disk_read_bytes_total counter***  
+**node_disk_read_bytes_total{device="sda"} 1.203106816e+09**
+
+***# TYPE node_network_receive_errs_total counter***  
+**node_network_receive_errs_total{device="ens160"} 0**  
+***# TYPE node_network_receive_bytes_total counter***
+**node_network_receive_bytes_total{device="ens160"} 3.3009215e+07**  
+***# TYPE node_network_transmit_bytes_total counter***  
+**node_network_transmit_bytes_total{device="ens160"} 2.117522e+06**  
+***# TYPE node_network_transmit_errs_total counter***  
+**node_network_transmit_errs_total{device="ens160"} 0**
+
+ 
+##### 3. Установите в свою виртуальную машину Netdata. Воспользуйтесь готовыми пакетами для установки (sudo apt install -y netdata)....
+
+***Netdata установлена `sudo apt install -y netdata`***  
+***`/etc/netdata/netdata.conf` отредактирован согласно задания***  
+***В Vagrantfile порт проброшен***  
+***Был приятно удивлён с количества и детализации снимаемых метрик :)***
 
 
-##### 5. В iovisor BCC есть утилита opensnoop: ...  На какие файлы вы увидели вызовы группы open за первую секунду работы утилиты?
+##### 4. Можно ли по выводу dmesg понять, осознает ли ОС, что загружена не на настоящем оборудовании, а на системе виртуализации?
 
-***`root@vagrant:~# /usr/sbin/opensnoop-bpfcc`***
+`vagrant@vagrant:$` **dmesg | grep virt**  
+[    0.009380] CPU MTRRs all blank - virtualized system.  
+[    0.075777] Booting paravirtualized kernel on KVM  
+[   15.651411] systemd[1]: Detected virtualization oracle.  
 
-PID    COMM               FD ERR PATH  
-***828    vminfo              5   0 /var/run/utmp  
-610    dbus-daemon        -1   2 /usr/local/share/dbus-1/system-services  
-610    dbus-daemon        20   0 /usr/share/dbus-1/system-services  
-610    dbus-daemon        -1   2 /lib/dbus-1/system-services  
-610    dbus-daemon        20   0 /var/lib/snapd/dbus-1/system-services/  
-367    systemd-udevd      14   0 /sys/fs/cgroup/unified/system.slice/systemd-udevd.service/cgroup.procs  
-367    systemd-udevd      14   0 /sys/fs/cgroup/unified/system.slice/systemd-udevd.service/cgroup.threads  
-828    vminfo              5   0 /var/run/utmp***
+***Согласно выводу `dmesg` мы можем судить о том, что ОС "осознаёт", что она загружена в виртуальной среде***
 
 
+##### 5. Как настроен sysctl fs.nr_open на системе по-умолчанию? Узнайте, что означает этот параметр. Какой другой существующий лимит не позволит достичь такого числа (ulimit --help)?
 
-##### 6. Какой системный вызов использует uname -a? Приведите цитату из man по этому системному вызову, где описывается альтернативное местоположение в /proc, где можно узнать версию ядра и релиз ОС.
-
-***`uname -a` использует системный вызов `uname()`***
-
-***`Part of the utsname information is also accessible  via  /proc/sys/kernel/{ostype, hostname, osrelease, version, domainname}.`***
-
+`fs.nr_open` ***по умолчанию настроен на 1048576***  
+***Этот параметр задёт жесткий лимит на открытые дескрипторы в ОС***  
+`ulimit -Hn` ***покажет нам это же значение***
 
 
-##### 7. Чем отличается последовательность команд через ; и через && в bash? Например:... Есть ли смысл использовать в bash &&, если применить set -e?
+##### 6. Запустите любой долгоживущий процесс (не ls, который отработает мгновенно, а, например, sleep 1h) в отдельном неймспейсе процессов; покажите, что ваш процесс работает под PID 1 через nsenter. Для простоты работайте в данном задании под root (sudo -i). Под обычным пользователем требуются дополнительные опции (--map-root-user) и т.д
+
+***По логике вещей следующая последовательность команд в консоли должна была отработать задание с PID1, но не получилось. Должен признаться не совсем понимаю почему***
+
+`root@alexey-virtual-machine:~#` ***sleep 1h***  
+`root@alexey-virtual-machine:~#` ***ps aux | grep sleep***  
+`alexey    9449  0.0  0.0   8692   820 pts/0    S+   19:58   0:00 sleep 1h`  
+`root      9532  0.0  0.0  15652  1012 pts/1    S+   19:58   0:00 grep --color=auto sleep`  
+`root@alexey-virtual-machine:~#` ***nsenter --target 9449 --pid --mount --no-fork***  
+`root@alexey-virtual-machine:/#` ***ps***  
+  PID TTY          TIME CMD  
+ 9489 pts/1    00:00:00 sudo  
+ 9493 pts/1    00:00:00 bash  
+ 9583 pts/1    00:00:00 bash  
+ 9603 pts/1    00:00:00 ps
 
 
-***`;` и `&&` в bash - разделитель последовательных команд и условный оператор соответственно***  
-***В случае с `root@netology1:~# test -d /tmp/some_dir && echo Hi` вывод на экран получим при успешном завершении работы команды `test`***  
-***Использовать в bash `&&`, если применить `set -e` смысла нет. При ошибке выполнение команд остановится***
+##### 7. Найдите информацию о том, что такое :(){ :|:& };:. Запустите эту команду в своей виртуальной машине Vagrant с Ubuntu 20.04 (это важно, поведение в других ОС не проверялось). Некоторое время все будет "плохо", после чего (минуты) – ОС должна стабилизироваться. Вызов dmesg расскажет, какой механизм помог автоматической стабилизации. Как настроен этот механизм по-умолчанию, и как изменить число процессов, которое можно создать в сессии?
 
-
-##### 8. Из каких опций состоит режим bash set -euxo pipefail и почему его хорошо было бы использовать в сценариях?
-
-***`-e` прерывает выполнение исполнения при ошибке любой команды кроме последней в последовательности***  
-***`-x` вывод трейса простых команд***  
-***`-u` неустановленные/не заданные параметры и переменные считаются как ошибки, с выводом в stderr текста ошибки и выполнит завершение неинтерактивного вызова***  
-***`-o` pipefail возвращаемое значение конвейера - это состояние последней команды, которая должна выйти с ненулевым статусом, или ноль, если ни одна команда не вышла с ненулевым статусом***
-
-***Повышение уровня дебага выполняемого сценария. Возможность завершить сценарий при ошибке на любом этапе, кроме последней команды***
-##### 9. Используя -o stat для ps, определите, какой наиболее часто встречающийся статус у процессов в системе. В man ps ознакомьтесь (/PROCESS STATE CODES) что значат дополнительные к основной заглавной буквы статуса процессов. Его можно не учитывать при расчете (считать S, Ss или Ssl равнозначными).
-
-***Наиболее частые `S*(S,S+,Ss,Ssl,Ss+)`, `I*(I,I<)`***
-***Дополнительные симовлы описывают характеристики процесса: приоритет, многопоточность и пр.***
+`:(){ :|:& };:` ***по своей сути является fork бомбой. По сути функция, которая параллельно запускает себя дважды, потом каждая ещё по два экземпляра и так в геометрической прогрессии, пока не исчерпается память.***  
+***Решается заданием параметра `ulimit -u` двузначным числом, чтобы ограничить максимально допустимое количество процессов для пользователя***
