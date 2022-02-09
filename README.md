@@ -32,10 +32,15 @@
 ***User=node_exporter***  
 ***Group=node_exporter***  
 ***Type=simple***  
-***ExecStart=/usr/local/bin/node_exporter***
+***EnvironmentFile=/etc/default/node_exporter***  
+***ExecStart=/usr/local/bin/node_exporter $NE_OPT***
 
 **[Install]**  
 ***WantedBy=multi-user.target***
+
+`cat /etc/default/node_exporter`  
+***NE_OPT="--log.level=info"***
+
 
 `sudo systemctl enable --now node_exporter`  
 `systemctl status node_exporter`
@@ -51,9 +56,9 @@
 **node_memory_MemAvailable_bytes 2.256326656e+09**  
 ***# TYPE node_memory_MemFree_bytes gauge***  
 **node_memory_MemFree_bytes 9.45836032e+08**  
-
 ***# TYPE node_memory_MemTotal_bytes gauge***  
 **node_memory_MemTotal_bytes 4.122759168e+09**  
+
 ***# TYPE node_disk_io_time_seconds_total counter***  
 **node_disk_io_time_seconds_total{device="sda"} 58.92**  
 ***# TYPE node_disk_read_bytes_total counter***  
@@ -61,7 +66,7 @@
 
 ***# TYPE node_network_receive_errs_total counter***  
 **node_network_receive_errs_total{device="ens160"} 0**  
-***# TYPE node_network_receive_bytes_total counter***
+***# TYPE node_network_receive_bytes_total counter***  
 **node_network_receive_bytes_total{device="ens160"} 3.3009215e+07**  
 ***# TYPE node_network_transmit_bytes_total counter***  
 **node_network_transmit_bytes_total{device="ens160"} 2.117522e+06**  
@@ -96,19 +101,24 @@
 
 ##### 6. Запустите любой долгоживущий процесс (не ls, который отработает мгновенно, а, например, sleep 1h) в отдельном неймспейсе процессов; покажите, что ваш процесс работает под PID 1 через nsenter. Для простоты работайте в данном задании под root (sudo -i). Под обычным пользователем требуются дополнительные опции (--map-root-user) и т.д
 
-***По логике вещей следующая последовательность команд в консоли должна была отработать задание с PID1, но не получилось. Должен признаться не совсем понимаю почему***
-
-`root@alexey-virtual-machine:~#` ***sleep 1h***  
-`root@alexey-virtual-machine:~#` ***ps aux | grep sleep***  
-`alexey    9449  0.0  0.0   8692   820 pts/0    S+   19:58   0:00 sleep 1h`  
-`root      9532  0.0  0.0  15652  1012 pts/1    S+   19:58   0:00 grep --color=auto sleep`  
-`root@alexey-virtual-machine:~#` ***nsenter --target 9449 --pid --mount --no-fork***  
-`root@alexey-virtual-machine:/#` ***ps***  
-  PID TTY          TIME CMD  
- 9489 pts/1    00:00:00 sudo  
- 9493 pts/1    00:00:00 bash  
- 9583 pts/1    00:00:00 bash  
- 9603 pts/1    00:00:00 ps
+`root@vagrant:~#` ***unshare -f --pid --mount-proc sleep 1h***  
+`^Z`   
+`[2]+  Stopped                 unshare -f --pid --mount-proc sleep 1h`  
+`root@vagrant:~#` ***ps***  
+    PID TTY          TIME CMD  
+  38301 pts/1    00:00:00 sudo  
+  38302 pts/1    00:00:00 bash  
+  38313 pts/1    00:00:00 sleep  
+  45646 pts/1    00:00:00 unshare  
+  45647 pts/1    00:00:00 sleep  
+  45652 pts/1    00:00:00 ps  
+`root@vagrant:~#` ***nsenter -t 45647 -p -m***  
+`root@vagrant:/#` ***ps***  
+    PID TTY          TIME CMD  
+      1 pts/1    00:00:00 sleep  
+      2 pts/1    00:00:00 bash  
+     13 pts/1    00:00:00 ps  
+`root@vagrant:/#`
 
 
 ##### 7. Найдите информацию о том, что такое :(){ :|:& };:. Запустите эту команду в своей виртуальной машине Vagrant с Ubuntu 20.04 (это важно, поведение в других ОС не проверялось). Некоторое время все будет "плохо", после чего (минуты) – ОС должна стабилизироваться. Вызов dmesg расскажет, какой механизм помог автоматической стабилизации. Как настроен этот механизм по-умолчанию, и как изменить число процессов, которое можно создать в сессии?
