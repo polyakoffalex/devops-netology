@@ -76,31 +76,31 @@ Writing superblocks and filesystem accounting information: done***
 
 ##### 14. Прикрепите вывод lsblk
 
-`root@vagrant:~# lsblk`
-***NAME                      MAJ:MIN RM  SIZE RO TYPE  MOUNTPOINT
-loop0                       7:0    0 55.4M  1 loop  /snap/core18/2128
-loop1                       7:1    0 70.3M  1 loop  /snap/lxd/21029
-loop2                       7:2    0 32.3M  1 loop  /snap/snapd/12704
-loop3                       7:3    0 55.5M  1 loop  /snap/core18/2284
-loop4                       7:4    0 43.4M  1 loop  /snap/snapd/14549
-loop5                       7:5    0 61.9M  1 loop  /snap/core20/1328
-loop6                       7:6    0 67.2M  1 loop  /snap/lxd/21835
-sda                         8:0    0   64G  0 disk
-├─sda1                      8:1    0    1M  0 part
-├─sda2                      8:2    0    1G  0 part  /boot
-└─sda3                      8:3    0   63G  0 part
-  └─ubuntu--vg-ubuntu--lv 253:0    0 31.5G  0 lvm   /
-sdb                         8:16   0  2.5G  0 disk
-├─sdb1                      8:17   0    2G  0 part
-│ └─md0                     9:0    0    2G  0 raid1
-└─sdb2                      8:18   0  500M  0 part
-  └─md1                     9:1    0  996M  0 raid0
-    └─vg0-lvol0           253:1    0  100M  0 lvm   /tmp/new
-sdc                         8:32   0  2.5G  0 disk
-├─sdc1                      8:33   0    2G  0 part
-│ └─md0                     9:0    0    2G  0 raid1
-└─sdc2                      8:34   0  500M  0 part
-  └─md1                     9:1    0  996M  0 raid0
+`root@vagrant:~# lsblk`  
+***NAME                      MAJ:MIN RM  SIZE RO TYPE  MOUNTPOINT  
+loop0                       7:0    0 55.4M  1 loop  /snap/core18/2128  
+loop1                       7:1    0 70.3M  1 loop  /snap/lxd/21029  
+loop2                       7:2    0 32.3M  1 loop  /snap/snapd/12704  
+loop3                       7:3    0 55.5M  1 loop  /snap/core18/2284  
+loop4                       7:4    0 43.4M  1 loop  /snap/snapd/14549  
+loop5                       7:5    0 61.9M  1 loop  /snap/core20/1328  
+loop6                       7:6    0 67.2M  1 loop  /snap/lxd/21835  
+sda                         8:0    0   64G  0 disk  
+├─sda1                      8:1    0    1M  0 part  
+├─sda2                      8:2    0    1G  0 part  /boot  
+└─sda3                      8:3    0   63G  0 part  
+  └─ubuntu--vg-ubuntu--lv 253:0    0 31.5G  0 lvm   /  
+sdb                         8:16   0  2.5G  0 disk  
+├─sdb1                      8:17   0    2G  0 part  
+│ └─md0                     9:0    0    2G  0 raid1  
+└─sdb2                      8:18   0  500M  0 part  
+  └─md1                     9:1    0  996M  0 raid0  
+    └─vg0-lvol0           253:1    0  100M  0 lvm   /tmp/new  
+sdc                         8:32   0  2.5G  0 disk  
+├─sdc1                      8:33   0    2G  0 part  
+│ └─md0                     9:0    0    2G  0 raid1  
+└─sdc2                      8:34   0  500M  0 part  
+  └─md1                     9:1    0  996M  0 raid0  
     └─vg0-lvol0           253:1    0  100M  0 lvm   /tmp/new***
 	
 	
@@ -123,12 +123,12 @@ sdc                         8:32   0  2.5G  0 disk
 ##### 18. Подтвердите выводом dmesg, что RAID1 работает в деградированном состоянии.
 
 `root@vagrant:~# dmesg | grep md0`  
-***[ 4288.213432] md/raid1:md0: not clean -- starting background reconstruction
-[ 4288.213434] md/raid1:md0: active with 2 out of 2 mirrors
-[ 4288.213456] md0: detected capacity change from 0 to 2144337920
-[ 4288.215830] md: resync of RAID array md0
-[ 4298.794516] md: md0: resync done.
-[ 7385.381063] md/raid1:md0: Disk failure on sdb1, disabling device.
+***[ 4288.213432] md/raid1:md0: not clean -- starting background reconstruction  
+[ 4288.213434] md/raid1:md0: active with 2 out of 2 mirrors  
+[ 4288.213456] md0: detected capacity change from 0 to 2144337920  
+[ 4288.215830] md: resync of RAID array md0  
+[ 4298.794516] md: md0: resync done.  
+[ 7385.381063] md/raid1:md0: Disk failure on sdb1, disabling device.  
                md/raid1:md0: Operation continuing on 1 devices.***
 			   
 ##### 19. Протестируйте целостность файла, несмотря на "сбойный" диск он должен продолжать быть доступен:...
