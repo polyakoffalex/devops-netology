@@ -1,127 +1,141 @@
-# Домашнее задание к занятию "3.4. Операционные системы, лекция 2"
+# Домашнее задание к занятию "3.5. Файловые системы"
 
 
-###### 1. На лекции мы познакомились с node_exporter...  
+###### 1. Узнайте о sparse (разряженных) файлах.
 
+***Прочитал статью. Думаю имеет право на существование в случаях передачи больших фалов в пиринговых сетях, хранении большого объёма информации, и, может быть для архивации данных***
 
-**# HELP go_gc_duration_seconds A summary of the pause duration of garbage collection cycles.**  
-**# TYPE go_gc_duration_seconds summary**  
-**go_gc_duration_seconds{quantile="0"} 0**   
-**go_gc_duration_seconds{quantile="0.25"} 0**  
-**go_gc_duration_seconds{quantile="0.5"} 0**  
-**go_gc_duration_seconds{quantile="0.75"} 0**  
-**go_gc_duration_seconds{quantile="1"} 0**  
-**go_gc_duration_seconds_sum 0**  
-**go_gc_duration_seconds_count 0**  
-**# HELP go_goroutines Number of goroutines that currently exist.**  
-**# TYPE go_goroutines gauge**  
-**go_goroutines 9**  
-.....
- - поместите его в автозагрузку
- - предусмотрите возможность добавления опций к запускаемому процессу через внешний файл (посмотрите, например, на systemctl cat cron)  
- - удостоверьтесь, что с помощью systemctl процесс корректно стартует, завершается, а после перезагрузки автоматически поднимается.
+###### 2. Могут ли файлы, являющиеся жесткой ссылкой на один объект, иметь разные права доступа и владельца? Почему?
 
-`cat nano /etc/systemd/system/node_exporter.service`
+***Права будут идентичные. Создав произвольный файл и ссылку на него, мы увидим одинаковый набор прав. `chmod` на файл изменит и права на жесткую ссылку, т.к. оба объекта имеют общний `inode`***
 
-**[Unit]**  
-***Description=Prometheus Node Exporter***  
-***Wants=network-online.target***  
-***After=network-online.target***
-
-**[Service]**  
-***User=node_exporter***  
-***Group=node_exporter***  
-***Type=simple***  
-***EnvironmentFile=/etc/default/node_exporter***  
-***ExecStart=/usr/local/bin/node_exporter $NE_OPT***
-
-**[Install]**  
-***WantedBy=multi-user.target***
-
-`cat /etc/default/node_exporter`  
-***NE_OPT="--log.level=info"***
-
-
-`sudo systemctl enable --now node_exporter`  
-`systemctl status node_exporter`
-
-***Active: active  (running)***
-###### 2. Ознакомьтесь с опциями node_exporter и выводом /metrics по-умолчанию. Приведите несколько опций, которые вы бы выбрали для базового мониторинга хоста по CPU, памяти, диску и сети.
-***# TYPE node_cpu_seconds_total counter***  
-**node_cpu_seconds_total{cpu="0",mode="idle"} 5199.8**  
-**node_cpu_seconds_total{cpu="0",mode="system"} 82.21**  
-**node_cpu_seconds_total{cpu="0",mode="user"} 243.12**
-
-***# TYPE node_memory_MemAvailable_bytes gauge***  
-**node_memory_MemAvailable_bytes 2.256326656e+09**  
-***# TYPE node_memory_MemFree_bytes gauge***  
-**node_memory_MemFree_bytes 9.45836032e+08**  
-***# TYPE node_memory_MemTotal_bytes gauge***  
-**node_memory_MemTotal_bytes 4.122759168e+09**  
-
-***# TYPE node_disk_io_time_seconds_total counter***  
-**node_disk_io_time_seconds_total{device="sda"} 58.92**  
-***# TYPE node_disk_read_bytes_total counter***  
-**node_disk_read_bytes_total{device="sda"} 1.203106816e+09**
-
-***# TYPE node_network_receive_errs_total counter***  
-**node_network_receive_errs_total{device="ens160"} 0**  
-***# TYPE node_network_receive_bytes_total counter***  
-**node_network_receive_bytes_total{device="ens160"} 3.3009215e+07**  
-***# TYPE node_network_transmit_bytes_total counter***  
-**node_network_transmit_bytes_total{device="ens160"} 2.117522e+06**  
-***# TYPE node_network_transmit_errs_total counter***  
-**node_network_transmit_errs_total{device="ens160"} 0**
 
  
-##### 3. Установите в свою виртуальную машину Netdata. Воспользуйтесь готовыми пакетами для установки (sudo apt install -y netdata)....
+##### 3. Сделайте vagrant destroy на имеющийся инстанс Ubuntu. Замените содержимое Vagrantfile следующим:...
 
-***Netdata установлена `sudo apt install -y netdata`***  
-***`/etc/netdata/netdata.conf` отредактирован согласно задания***  
-***В Vagrantfile порт проброшен***  
-***Был приятно удивлён с количества и детализации снимаемых метрик :)***
+***`vagrant destroy` удалил первую VM. Vagrantfile изменён согласно задания. `vagrant up` установил новую VM согласно конфигурации***
 
 
-##### 4. Можно ли по выводу dmesg понять, осознает ли ОС, что загружена не на настоящем оборудовании, а на системе виртуализации?
+##### 4. Используя fdisk, разбейте первый диск на 2 раздела: 2 Гб, оставшееся пространство.
 
-`vagrant@vagrant:$` **dmesg | grep virt**  
-[    0.009380] CPU MTRRs all blank - virtualized system.  
-[    0.075777] Booting paravirtualized kernel on KVM  
-[   15.651411] systemd[1]: Detected virtualization oracle.  
-
-***Согласно выводу `dmesg` мы можем судить о том, что ОС "осознаёт", что она загружена в виртуальной среде***
+`sudo fdisk /dev/sdb`  
+ ***Создано 2 раздела 2Gb и 500Mb***
 
 
-##### 5. Как настроен sysctl fs.nr_open на системе по-умолчанию? Узнайте, что означает этот параметр. Какой другой существующий лимит не позволит достичь такого числа (ulimit --help)?
 
-`fs.nr_open` ***по умолчанию настроен на 1048576***  
-***Этот параметр задёт жесткий лимит на открытые дескрипторы в ОС***  
-`ulimit -Hn` ***покажет нам это же значение***
+##### 5. Используя sfdisk, перенесите данную таблицу разделов на второй диск.
 
+`sfdisk -d /dev/sdb | sfdisk /dev/sdc`  
+***Перенос таблицы разделов на второй диск***
 
-##### 6. Запустите любой долгоживущий процесс (не ls, который отработает мгновенно, а, например, sleep 1h) в отдельном неймспейсе процессов; покажите, что ваш процесс работает под PID 1 через nsenter. Для простоты работайте в данном задании под root (sudo -i). Под обычным пользователем требуются дополнительные опции (--map-root-user) и т.д
+##### 6. Соберите mdadm RAID1 на паре разделов 2 Гб.
 
-`root@vagrant:~#` ***unshare -f --pid --mount-proc sleep 1h***  
-`^Z`   
-`[2]+  Stopped                 unshare -f --pid --mount-proc sleep 1h`  
-`root@vagrant:~#` ***ps***  
-    PID TTY          TIME CMD  
-  38301 pts/1    00:00:00 sudo  
-  38302 pts/1    00:00:00 bash  
-  38313 pts/1    00:00:00 sleep  
-  45646 pts/1    00:00:00 unshare  
-  45647 pts/1    00:00:00 sleep  
-  45652 pts/1    00:00:00 ps  
-`root@vagrant:~#` ***nsenter -t 45647 -p -m***  
-`root@vagrant:/#` ***ps***  
-    PID TTY          TIME CMD  
-      1 pts/1    00:00:00 sleep  
-      2 pts/1    00:00:00 bash  
-     13 pts/1    00:00:00 ps  
-`root@vagrant:/#`
+`root@vagrant:~# mdadm --create --verbose /dev/md0 -l 1 -n 2 /dev/sd{b1,c1}`  
+***Собрали RAID1 из двухгигабайтных разделов*** 
 
 
-##### 7. Найдите информацию о том, что такое :(){ :|:& };:. Запустите эту команду в своей виртуальной машине Vagrant с Ubuntu 20.04 (это важно, поведение в других ОС не проверялось). Некоторое время все будет "плохо", после чего (минуты) – ОС должна стабилизироваться. Вызов dmesg расскажет, какой механизм помог автоматической стабилизации. Как настроен этот механизм по-умолчанию, и как изменить число процессов, которое можно создать в сессии?
+##### 7. Соберите mdadm RAID0 на второй паре маленьких разделов.
 
-`:(){ :|:& };:` ***по своей сути является fork бомбой. По сути функция, которая параллельно запускает себя дважды, потом каждая ещё по два экземпляра и так в геометрической прогрессии, пока не исчерпается память.***  
-***Решается заданием параметра `ulimit -u` двузначным числом, чтобы ограничить максимально допустимое количество процессов для пользователя***
+`root@vagrant:~# mdadm --create --verbose /dev/md1 -l 0 -n 2 /dev/sd{b2,c2}`  
+***Собрали RAID1 из двухгигабайтных разделов***
+
+##### 8. Создайте 2 независимых PV на получившихся md-устройствах.
+
+`root@vagrant:~# pvcreate /dev/md0 /dev/md1`  
+***Создали 2 независимых PV***
+
+##### 9. Создайте общую volume-group на этих двух PV.
+
+`root@vagrant:~# vgcreate vg0 /dev/md0 /dev/md1`  
+***Volume group "vg0" successfully created***
+
+##### 10. Создайте LV размером 100 Мб, указав его расположение на PV с RAID0.
+
+`lvcreate -L 100M vg0 /dev/md1`  
+***Logical volume "lvol0" created.***
+
+##### 11. Создайте mkfs.ext4 ФС на получившемся LV.
+
+`mkfs.ext4 /dev/vg0/lvol0`  
+***mke2fs 1.45.5 (07-Jan-2020)
+Creating filesystem with 25600 4k blocks and 25600 inodes  
+Allocating group tables: done                            
+Writing inode tables: done                            
+Creating journal (1024 blocks): done
+Writing superblocks and filesystem accounting information: done***
+
+##### 12. Смонтируйте этот раздел в любую директорию, например, /tmp/new.
+
+`root@vagrant:~# mkdir /tmp/new`  
+`root@vagrant:~# mount /dev/vg0/lvol0 /tmp/new`  
+***ФС примонтирована в /tmp/new***
+
+##### 13. Поместите туда тестовый файл, например wget https://mirror.yandex.ru/ubuntu/ls-lR.gz -O /tmp/new/test.gz.
+
+***Файл `ls-lR.gz` помещён в директорию /tmp/new как `test.gz`***
+
+##### 14. Прикрепите вывод lsblk
+
+`root@vagrant:~# lsblk`
+***NAME                      MAJ:MIN RM  SIZE RO TYPE  MOUNTPOINT
+loop0                       7:0    0 55.4M  1 loop  /snap/core18/2128
+loop1                       7:1    0 70.3M  1 loop  /snap/lxd/21029
+loop2                       7:2    0 32.3M  1 loop  /snap/snapd/12704
+loop3                       7:3    0 55.5M  1 loop  /snap/core18/2284
+loop4                       7:4    0 43.4M  1 loop  /snap/snapd/14549
+loop5                       7:5    0 61.9M  1 loop  /snap/core20/1328
+loop6                       7:6    0 67.2M  1 loop  /snap/lxd/21835
+sda                         8:0    0   64G  0 disk
+├─sda1                      8:1    0    1M  0 part
+├─sda2                      8:2    0    1G  0 part  /boot
+└─sda3                      8:3    0   63G  0 part
+  └─ubuntu--vg-ubuntu--lv 253:0    0 31.5G  0 lvm   /
+sdb                         8:16   0  2.5G  0 disk
+├─sdb1                      8:17   0    2G  0 part
+│ └─md0                     9:0    0    2G  0 raid1
+└─sdb2                      8:18   0  500M  0 part
+  └─md1                     9:1    0  996M  0 raid0
+    └─vg0-lvol0           253:1    0  100M  0 lvm   /tmp/new
+sdc                         8:32   0  2.5G  0 disk
+├─sdc1                      8:33   0    2G  0 part
+│ └─md0                     9:0    0    2G  0 raid1
+└─sdc2                      8:34   0  500M  0 part
+  └─md1                     9:1    0  996M  0 raid0
+    └─vg0-lvol0           253:1    0  100M  0 lvm   /tmp/new***
+	
+	
+##### 15. Протестируйте целостность файла:
+
+`root@vagrant:~# gzip -t /tmp/new/test.gz && echo $?`  
+***0***
+
+##### 16. Используя pvmove, переместите содержимое PV с RAID0 на RAID1.
+
+`root@vagrant:~# pvmove /dev/md1`  
+***/dev/md0: Moved: 80.00%  
+/dev/md0: Moved: 100.00%***
+
+##### 17. Сделайте --fail на устройство в вашем RAID1 md.
+
+`mdadm /dev/md0 --fail /dev/sdb1`  
+***mdadm: set /dev/sdb1 faulty in /dev/md0***
+
+##### 18. Подтвердите выводом dmesg, что RAID1 работает в деградированном состоянии.
+
+`root@vagrant:~# dmesg | grep md0`  
+***[ 4288.213432] md/raid1:md0: not clean -- starting background reconstruction
+[ 4288.213434] md/raid1:md0: active with 2 out of 2 mirrors
+[ 4288.213456] md0: detected capacity change from 0 to 2144337920
+[ 4288.215830] md: resync of RAID array md0
+[ 4298.794516] md: md0: resync done.
+[ 7385.381063] md/raid1:md0: Disk failure on sdb1, disabling device.
+               md/raid1:md0: Operation continuing on 1 devices.***
+			   
+##### 19. Протестируйте целостность файла, несмотря на "сбойный" диск он должен продолжать быть доступен:...
+
+`root@vagrant:~# gzip -t /tmp/new/test.gz && echo $?`  
+***0***
+
+##### 20. Погасите тестовый хост, vagrant destroy.
+
+`vagrant destroy`
