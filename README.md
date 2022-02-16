@@ -27,7 +27,7 @@ Set-Cookie: prov=12d111ff-615b-8c41-9018-6841d91bf043; domain=.stackoverflow.com
 
 ***Получен код 200***  
 ***самый долгий запрос `collect` обрабатывался 112ms***  
-![Скриншот консоли](https://drive.google.com/file/d/1L_ps3kn8px0Mbls9EL34WMGJ-TMNe8JL/view?usp=sharing)
+![Скриншот консоли](http://prntscr.com/26wtf37)
 
 
  
