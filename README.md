@@ -1,175 +1,268 @@
-# Домашнее задание к занятию "3.7. Компьютерные сети, лекция 2"
+# Домашнее задание к занятию "3.8. Компьютерные сети, лекция 3"
 
 
-###### 1. Проверьте список доступных сетевых интерфейсов на вашем компьютере. Какие команды есть для этого в Linux и в Windows?
-
-***OS Windows***
-```
-C:\Users\Alex>ipconfig
-
-Настройка протокола IP для Windows
-
-
-Адаптер Ethernet VirtualBox Host-Only Network:
-
-   DNS-суффикс подключения . . . . . :
-   Локальный IPv6-адрес канала . . . : fe80::b061:2bd6:8c64:5212%9
-   IPv4-адрес. . . . . . . . . . . . : 192.168.56.1
-   Маска подсети . . . . . . . . . . : 255.255.255.0
-   Основной шлюз. . . . . . . . . :
-
-Адаптер беспроводной локальной сети Беспроводная сеть:
-
-   Состояние среды. . . . . . . . : Среда передачи недоступна.
-   DNS-суффикс подключения . . . . . : Home
-
-Адаптер беспроводной локальной сети Подключение по локальной сети* 1:
-
-   Состояние среды. . . . . . . . : Среда передачи недоступна.
-   DNS-суффикс подключения . . . . . :
-
-Адаптер беспроводной локальной сети Подключение по локальной сети* 2:
-
-   Состояние среды. . . . . . . . : Среда передачи недоступна.
-   DNS-суффикс подключения . . . . . :
-
-Адаптер Ethernet Ethernet:
-
-   DNS-суффикс подключения . . . . . :
-   IPv4-адрес. . . . . . . . . . . . : 192.168.88.250
-   Маска подсети . . . . . . . . . . : 255.255.255.0
-   Основной шлюз. . . . . . . . . : 192.168.88.1
-
-Адаптер Ethernet Ethernet 2:
-
-   Состояние среды. . . . . . . . : Среда передачи недоступна.
-   DNS-суффикс подключения . . . . . :
-
-Адаптер Ethernet Ethernet 3:
-
-   Состояние среды. . . . . . . . : Среда передачи недоступна.
-   DNS-суффикс подключения . . . . . :
-```
-
-***Linux***
+###### 1. Подключитесь к публичному маршрутизатору в интернет. Найдите маршрут к вашему публичному IP
 
 ```
-vagrant@vagrant:~$ ip link
-1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN mode DEFAULT group default qlen 1000
-    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
-2: eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc fq_codel state UP mode DEFAULT group default qlen 1000
-    link/ether 08:00:27:b1:28:5d brd ff:ff:ff:ff:ff:ff
+route-views>sh ip route 89.31.36.69
+Routing entry for 89.31.32.0/21
+  Known via "bgp 6447", distance 20, metric 0
+  Tag 2497, type external
+  Last update from 202.232.0.2 5w5d ago
+  Routing Descriptor Blocks:
+  * 202.232.0.2, from 202.232.0.2, 5w5d ago
+      Route metric is 0, traffic share count is 1
+      AS Hops 3
+      Route tag 2497
+      MPLS label: none
+route-views>
 ```
 
-###### 2. Какой протокол используется для распознавания соседа по сетевому интерфейсу? Какой пакет и команды есть в Linux для этого?
-
-***Используется протокол lldp. Так же можно посмотреть записи о соседях в таблице `ARP` вида `arp-a` или `ip neighbor`. Для ipv6 соседей можно использовать `ndptool`***  
-
-
-`root@alex-virtual-machine:~# lldpctl`
 ```
--------------------------------------------------------------------------------
+route-views>sh bgp 89.31.36.69
+BGP routing table entry for 89.31.32.0/21, version 254927
+Paths: (23 available, best #18, table default)
+  Not advertised to any peer
+  Refresh Epoch 1
+  101 3356 8359 43148
+    209.124.176.223 from 209.124.176.223 (209.124.176.223)
+      Origin IGP, localpref 100, valid, external
+      Community: 101:20100 101:20110 101:22100 3356:2 3356:100 3356:123 3356:507 3356:903 3356:2111 8359:5500 8359:55545
+      Extended Community: RT:101:22100
+      path 7FE0BE35A070 RPKI State not found
+      rx pathid: 0, tx pathid: 0
+  Refresh Epoch 1
+  3333 8359 43148
+    193.0.0.56 from 193.0.0.56 (193.0.0.56)
+      Origin IGP, localpref 100, valid, external
+      Community: 8359:5500 8359:55545
+      path 7FE12C21DCE8 RPKI State not found
+      rx pathid: 0, tx pathid: 0
+  Refresh Epoch 1
+  6939 8359 43148
+    64.71.137.241 from 64.71.137.241 (216.218.252.164)
+      Origin IGP, localpref 100, valid, external
+      path 7FE0338B13F0 RPKI State not found
+      rx pathid: 0, tx pathid: 0
+  Refresh Epoch 2
+  8283 8359 43148
+    94.142.247.3 from 94.142.247.3 (94.142.247.3)
+      Origin IGP, metric 0, localpref 100, valid, external
+      Community: 8283:1 8283:101 8359:5500 8359:55545
+      unknown transitive attribute: flag 0xE0 type 0x20 length 0x18
+        value 0000 205B 0000 0000 0000 0001 0000 205B
+              0000 0005 0000 0001
+      path 7FE0FA0D22C8 RPKI State not found
+      rx pathid: 0, tx pathid: 0
+  Refresh Epoch 1
+  1351 8359 8359 43148
+    132.198.255.253 from 132.198.255.253 (132.198.255.253)
+      Origin IGP, localpref 100, valid, external
+      path 7FE04116CDB8 RPKI State not found
+      rx pathid: 0, tx pathid: 0
+  Refresh Epoch 1
+  57866 3356 8359 43148
+    37.139.139.17 from 37.139.139.17 (37.139.139.17)
+      Origin IGP, metric 0, localpref 100, valid, external
+      Community: 3356:2 3356:100 3356:123 3356:507 3356:903 3356:2111 8359:5500 8359:55545
+      path 7FE1095C3088 RPKI State not found
+      rx pathid: 0, tx pathid: 0
+  Refresh Epoch 1
+  852 3356 8359 43148
+    154.11.12.212 from 154.11.12.212 (96.1.209.43)
+      Origin IGP, metric 0, localpref 100, valid, external
+      path 7FE13C83EB40 RPKI State not found
+      rx pathid: 0, tx pathid: 0
+  Refresh Epoch 1
+  20130 6939 8359 43148
+    140.192.8.16 from 140.192.8.16 (140.192.8.16)
+      Origin IGP, localpref 100, valid, external
+      path 7FE12F7BAA28 RPKI State not found
+      rx pathid: 0, tx pathid: 0
+  Refresh Epoch 1
+  701 3356 8359 43148
+    137.39.3.55 from 137.39.3.55 (137.39.3.55)
+      Origin IGP, localpref 100, valid, external
+      path 7FE166FDB5E8 RPKI State not found
+      rx pathid: 0, tx pathid: 0
+  Refresh Epoch 1
+  3549 3356 8359 43148
+    208.51.134.254 from 208.51.134.254 (67.16.168.191)
+      Origin IGP, metric 0, localpref 100, valid, external
+      Community: 3356:2 3356:100 3356:123 3356:507 3356:903 3356:2111 3549:2581 3549:30840 8359:5500 8359:55545
+      path 7FE0FC58A070 RPKI State not found
+      rx pathid: 0, tx pathid: 0
+  Refresh Epoch 1
+  53767 174 174 3356 8359 43148
+    162.251.163.2 from 162.251.163.2 (162.251.162.3)
+      Origin IGP, localpref 100, valid, external
+      Community: 174:21000 174:22013 53767:5000
+      path 7FE0D9B036A8 RPKI State not found
+      rx pathid: 0, tx pathid: 0
+  Refresh Epoch 1
+  3356 8359 43148
+    4.68.4.46 from 4.68.4.46 (4.69.184.201)
+      Origin IGP, metric 0, localpref 100, valid, external
+      Community: 3356:2 3356:100 3356:123 3356:507 3356:903 3356:2111 8359:5500 8359:55545
+      path 7FE017BE9ED8 RPKI State not found
+      rx pathid: 0, tx pathid: 0
+  Refresh Epoch 1
+  4901 6079 8359 43148
+    162.250.137.254 from 162.250.137.254 (162.250.137.254)
+      Origin IGP, localpref 100, valid, external
+      Community: 65000:10100 65000:10300 65000:10400
+      path 7FE094FA9108 RPKI State not found
+      rx pathid: 0, tx pathid: 0
+  Refresh Epoch 1
+  20912 3257 3356 8359 43148
+    212.66.96.126 from 212.66.96.126 (212.66.96.126)
+      Origin IGP, localpref 100, valid, external
+      Community: 3257:8070 3257:30515 3257:50001 3257:53900 3257:53902 20912:65004
+      path 7FE118547950 RPKI State not found
+      rx pathid: 0, tx pathid: 0
+  Refresh Epoch 1
+  3303 8359 43148
+    217.192.89.50 from 217.192.89.50 (138.187.128.158)
+      Origin IGP, localpref 100, valid, external
+      Community: 3303:1004 3303:1006 3303:1030 3303:3054 8359:5500 8359:55545
+      path 7FE143F0DB78 RPKI State not found
+      rx pathid: 0, tx pathid: 0
+  Refresh Epoch 1
+  7018 3356 8359 43148
+    12.0.1.63 from 12.0.1.63 (12.0.1.63)
+      Origin IGP, localpref 100, valid, external
+      Community: 7018:5000 7018:37232
+      path 7FE15726F400 RPKI State not found
+      rx pathid: 0, tx pathid: 0
+  Refresh Epoch 1
+  3561 3910 3356 8359 43148
+    206.24.210.80 from 206.24.210.80 (206.24.210.80)
+      Origin IGP, localpref 100, valid, external
+      path 7FE177FE8F30 RPKI State not found
+      rx pathid: 0, tx pathid: 0
+  Refresh Epoch 2
+  2497 8359 43148
+    202.232.0.2 from 202.232.0.2 (58.138.96.254)
+      Origin IGP, localpref 100, valid, external, best
+      path 7FE18B21E708 RPKI State not found
+      rx pathid: 0, tx pathid: 0x0
+  Refresh Epoch 1
+  7660 2516 1299 8359 43148
+    203.181.248.168 from 203.181.248.168 (203.181.248.168)
+      Origin IGP, localpref 100, valid, external
+      Community: 2516:1030 7660:9003
+      path 7FE1141B83B8 RPKI State not found
+      rx pathid: 0, tx pathid: 0
+  Refresh Epoch 1
+  3257 3356 8359 43148
+    89.149.178.10 from 89.149.178.10 (213.200.83.26)
+      Origin IGP, metric 10, localpref 100, valid, external
+      Community: 3257:8794 3257:30043 3257:50001 3257:54900 3257:54901
+      path 7FE0A5D34CE8 RPKI State not found
+      rx pathid: 0, tx pathid: 0
+  Refresh Epoch 1
+  49788 12552 8359 43148
+    91.218.184.60 from 91.218.184.60 (91.218.184.60)
+      Origin IGP, localpref 100, valid, external
+      Community: 12552:12000 12552:12100 12552:12101 12552:22000
+      Extended Community: 0x43:100:1
+      path 7FE0A748CC50 RPKI State not found
+      rx pathid: 0, tx pathid: 0
+  Refresh Epoch 1
+  1221 4637 3356 8359 43148
+    203.62.252.83 from 203.62.252.83 (203.62.252.83)
+      Origin IGP, localpref 100, valid, external
+      path 7FE0C9F01588 RPKI State not found
+      rx pathid: 0, tx pathid: 0
+  Refresh Epoch 1
+  19214 3257 3356 8359 43148
+    208.74.64.40 from 208.74.64.40 (208.74.64.40)
+      Origin IGP, localpref 100, valid, external
+      Community: 3257:8108 3257:30048 3257:50002 3257:51200 3257:51203
+      path 7FE113BDBAD0 RPKI State not found
+      rx pathid: 0, tx pathid: 0
+route-views>
+```
 
-LLDP neighbors:
+###### 2. Создайте dummy0 интерфейс в Ubuntu. Добавьте несколько статических маршрутов. Проверьте таблицу маршрутизации.
 
--------------------------------------------------------------------------------
+`ip link add dummy0 type dummy`  
+`ip address add 192.168.100.10/24 dev dummy0`  
+`ip link set dummy0 up`
 
-Interface: ens160, via: LLDP, RID: 1, Time: 0 day, 00:00:56
-
-Chassis:
-
-ChassisID: mac cc:2d:e0:f2:3b:3a
-
-SysName: MikroTik
-
-SysDescr: MikroTik RouterOS 6.46 (stable) RB952Ui-5ac2nD
-
-MgmtIP: 192.168.88.1
-
-Capability: Bridge, on
-
-Capability: Router, on
-
-Port:
-
-PortID: ifname bridge/ether2
-
-TTL: 120
-
--------------------------------------------------------------------------------
+`ip route add 192.168.100.0/24 via 192.168.88.1`  
+`ip route add 192.168.110.0/24 dev ens160`  
+`netstat -rn`
+```
+Kernel IP routing table
+Destination     Gateway         Genmask         Flags   MSS Window  irtt Iface
+0.0.0.0         192.168.88.1    0.0.0.0         UG        0 0          0 ens160
+169.254.0.0     0.0.0.0         255.255.0.0     U         0 0          0 ens160
+192.168.0.0     0.0.0.0         255.255.255.0   U         0 0          0 dummy0
+192.168.88.0    0.0.0.0         255.255.255.0   U         0 0          0 ens160
+192.168.100.0   192.168.88.1    255.255.255.0   UG        0 0          0 ens160
+192.168.110.0   0.0.0.0         255.255.255.0   U         0 0          0 ens160
 ```
 
 
- 
-##### 3. Какая технология используется для разделения L2 коммутатора на несколько виртуальных сетей? Какой пакет и команды есть в Linux для этого? Приведите пример конфига.
+##### 3. Проверьте открытые TCP порты в Ubuntu, какие протоколы и приложения используют эти порты? Приведите несколько примеров.
 
-***Используется технология `vlan`***  
-***`apt-get install vlan` установит пакет `vlan`. Командой `vconfig` прописываются виланы, либо руками в `/etc/network/intetfaces`***  
+`ss -lnpt`  
+
+
 ```
-auto vlan1400
-iface vlan1400 inet static
-        address 192.168.1.1
-        netmask 255.255.255.0
-        vlan_raw_device eth0
+State   Recv-Q   Send-Q      Local Address:Port        Peer Address:Port                                                
+LISTEN  0        4096            127.0.0.1:8125             0.0.0.0:*       users:(("netdata",pid=5088,fd=8))           
+LISTEN  0        4096            127.0.0.1:19999            0.0.0.0:*       users:(("netdata",pid=5088,fd=3))           
+LISTEN  0        128         127.0.0.53%lo:53               0.0.0.0:*       users:(("systemd-resolve",pid=804,fd=13))   
+LISTEN  0        5               127.0.0.1:631              0.0.0.0:*       users:(("cupsd",pid=18720,fd=7))            
+LISTEN  0        4096                    *:9100                   *:*       users:(("node_exporter",pid=2569,fd=3))     
+LISTEN  0        5                   [::1]:631                 [::]:*       users:(("cupsd",pid=18720,fd=6))    
 ```
+***Порты 8125 и 19999 слушает программа netdata***  
+***Порт 53 слушает резолвер dns***  
+***Порт 9100 слушает node_exporter***
 
 
 
-##### 4. Какие типы агрегации интерфейсов есть в Linux? Какие опции есть для балансировки нагрузки? Приведите пример конфига.
+##### 4. Проверьте используемые UDP сокеты в Ubuntu, какие протоколы и приложения используют эти порты?
 
-`Mode-0(balance-rr)` – ***Данный режим используется по умолчанию. Обеспечивает балансировку нагрузки и отказоустойчивость.***  
-`Mode-1(active-backup)` – ***Один из интерфейсов работает в активном режиме, остальные в ожидающем.***  
-`Mode-2(balance-xor)` – ***Передача пакетов распределяется по типу входящего и исходящего трафика по формуле `((MAC src) XOR (MAC dest)) %` число интерфейсов.***  
-`Mode-3(broadcast)` – ***Происходит передача во все объединенные интерфейсы.***  
-`Mode-4(802.3ad)` – ***динамическое объединение одинаковых портов.***  
-`Mode-5(balance-tlb)` – ***Адаптивная балансировки нагрузки трафика. Входящий трафик получается только активным интерфейсом, исходящий распределяется в зависимости от текущей загрузки канала каждого интерфейса.***  
-`Mode-6(balance-alb)` – ***Адаптивная балансировка нагрузки. Отличается более совершенным алгоритмом балансировки нагрузки чем Mode-5). Обеспечивается балансировку нагрузки как исходящего так и входящего трафика.***
+`ss -lnpu`  
 
-***Пример конфига балансировки с опциями `/etc/network/intetfaces`***
 ```
-auto bond0 eth0 eth1
-# настройка параметров 
-iface bond0 inet static
-# адрес, маска, шлюз.
-        address 10.0.0.11
-        netmask 255.255.255.0
-        gateway 10.0.0.254
-        # определяем подчиненные (объединяемые) интерфейсы
-        bond-slaves eth0 eth1
-        # задаем тип бондинга
-        bond-mode balance-alb
-        # интервал проверки линии в миллисекундах
-        bond-miimon 100
-        # задержка перед установкой соединения в миллисекундах
-        bond-downdelay 200
-        # задержка перед обрывом соединения в миллисекундах
-        bond-updelay 200
+State   Recv-Q   Send-Q      Local Address:Port        Peer Address:Port                                                
+UNCONN  0        0                 0.0.0.0:57893            0.0.0.0:*       users:(("avahi-daemon",pid=866,fd=14))      
+UNCONN  0        0                 0.0.0.0:631              0.0.0.0:*       users:(("cups-browsed",pid=18722,fd=7))     
+UNCONN  0        0                 0.0.0.0:5353             0.0.0.0:*       users:(("avahi-daemon",pid=866,fd=12))      
+UNCONN  0        0               127.0.0.1:8125             0.0.0.0:*       users:(("netdata",pid=5088,fd=7))           
+UNCONN  0        0           127.0.0.53%lo:53               0.0.0.0:*       users:(("systemd-resolve",pid=804,fd=12))   
+UNCONN  0        0                 0.0.0.0:68               0.0.0.0:*       users:(("dhclient",pid=967,fd=6))           
+UNCONN  0        0                    [::]:5353                [::]:*       users:(("avahi-daemon",pid=866,fd=13))      
+UNCONN  0        0                    [::]:41234               [::]:*       users:(("avahi-daemon",pid=866,fd=15)) 
 ```
 
-##### 5. Сколько IP адресов в сети с маской /29 ? Сколько /29 подсетей можно получить из сети с маской /24. Приведите несколько примеров /29 подсетей внутри сети 10.10.10.0/24.
+***Порт 68 слушает dhcp клиент***  
+***Порт 5353 слушает avahi-daemon, некий лайтовый dns клиент***  
 
-***Маска `/29` подразумевает 8 адресов. В сети `/24` можно разместить 32 сети `/29`***  
 
-`10.10.10.0/24`  
-***10.10.10.128/29***  
-***10.10.10.136/29***  
-***10.10.10.144/29***  
-***10.10.10.152/29***
 
-##### 6. Задача: вас попросили организовать стык между 2-мя организациями. Диапазоны 10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16 уже заняты. Из какой подсети допустимо взять частные IP адреса? Маску выберите из расчета максимум 40-50 хостов внутри подсети.
+##### 5. Используя diagrams.net, создайте L3 диаграмму вашей домашней сети или любой другой сети, с которой вы работали.
 
-***Остались сети `100.64.0.0 — 100.127.255.255`***  
-***Условно можно выделить подсеть `100.64.100.100/27` с 30 хостами***
 
-##### 7. Как проверить ARP таблицу в Linux, Windows? Как очистить ARP кеш полностью? Как из ARP таблицы удалить только один нужный IP?
 
-***Linux***  
-`ip n` - ***просмотр ARP таблицы***  
-`ip neigh flush` - ***очистка ARP таблицы***  
-`ip neigh del dev {interface} {ip address}` - ***удаление конкретного адреса из ARP таблицы интерфейса***  
+![Схема](https://img001.prntscr.com/file/img001/V0LvudsCS5u0h1U3TgcrXg.png)
 
-***Windows***  
-`arp -a` - ***просмотр ARP таблицы***  
-`arp -d *` - ***очистка ARP таблицы***  
-`arp -d {inet_addr}` - ***удаление конкретного адреса из ARP таблицы***
+
+
+
+
+
+
+
+
+
+
+
+
+
 
